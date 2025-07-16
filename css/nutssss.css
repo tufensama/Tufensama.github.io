@@ -44,7 +44,7 @@ body {
 .headPhoto {
     width: 8rem;
     height: 8rem;
-    background: url(../img/headphoto.jpg) no-repeat;
+    background: url(/img/headphoto.jpg) no-repeat;
     background-size: cover;
     border-radius: 50%;
     position: relative;
