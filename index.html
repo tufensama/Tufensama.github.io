@@ -12,6 +12,45 @@
         <link rel="stylesheet" type="text/css" href="./css/FiraCode.css" />
         <link rel="stylesheet" type="text/css" href="./css/nutssss.css" />
         <link rel="icon" href="./favicon.ico" />
+        <style>
+            /* 添加气泡样式 */
+            .tooltip {
+                position: absolute;
+                bottom: 100%;
+                left: 50%;
+                transform: translateX(-50%);
+                background: white;
+                padding: 10px;
+                border-radius: 5px;
+                box-shadow: 0 0 10px rgba(0,0,0,0.2);
+                display: none;
+                z-index: 100;
+                width: 150px;
+                text-align: center;
+                font-size: 14px;
+            }
+            
+            .contact-tooltip img {
+                max-width: 100%;
+                height: auto;
+                border-radius: 3px;
+            }
+            
+            .button-wrapper {
+                position: relative;
+                display: inline-block;
+            }
+            
+            .button-wrapper:hover .tooltip {
+                display: block;
+            }
+            
+            .meBox-Button {
+                display: flex;
+                justify-content: center;
+                gap: 20px;
+            }
+        </style>
     </head>
 
     <body>
@@ -22,19 +61,30 @@
                 <div class="headPhoto"></div>
                 <!-- 介绍 -->
                 <div class="meBox-title">
-                    <p>I'm Tufen_sama</p>
+                    <p>I'm Tufen</p>
                     <div class="fg"></div>
                 </div>
                 <div class="meBox-text">
-              
                     <p>请大家不要尝试了解我</p>
-                    <p>因为我永远都是一个传说</p>
-                 
+                    <p>因为我永远都只是一个存在于</p>
+                    <p>网络世界的</p>	
+                    <p><span style="color: red;">传说</span></p>
                 </div>
                 <!-- 两个按钮 -->
                 <div class="meBox-Button">
-                    <a href="#">关于</a>
-                    <a href="#">联系</a>
+                    <div class="button-wrapper">
+                        <a href="#" onclick="showAbout(); return false;">关于</a>
+                        <div class="tooltip about-tooltip">
+                            <p>powered by Tufen_sama</p>
+                        </div>
+                    </div>
+                    <div class="button-wrapper">
+                        <a href="#" onclick="showContact(); return false;">联系</a>
+                        <div class="tooltip contact-tooltip">
+                            <img src="https://via.placeholder.com/150" alt="联系方式">
+                            <p>这是我的联系方式</p>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -116,5 +166,6 @@
         <div id="footer">
             <p>© 2025 Tufen_sama</p>
         </div>
+       
     </body>
 </html>
