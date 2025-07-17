@@ -78,6 +78,38 @@
                 animation: pulse 1s infinite;
             }
             
+            /* 音乐提示气泡样式 */
+            #musicHintBubble {
+                position: fixed;
+                bottom: 70px;
+                right: 20px;
+                background: rgba(0,0,0,0.8);
+                color: white;
+                padding: 10px 15px;
+                border-radius: 10px;
+                font-size: 14px;
+                max-width: 200px;
+                z-index: 1000;
+                box-shadow: 0 0 10px rgba(0,0,0,0.3);
+                animation: fadeIn 0.5s;
+                transform-origin: bottom right;
+            }
+            
+            #musicHintBubble::after {
+                content: "";
+                position: absolute;
+                bottom: -10px;
+                right: 20px;
+                border-width: 10px 10px 0;
+                border-style: solid;
+                border-color: rgba(0,0,0,0.8) transparent transparent;
+            }
+            
+            @keyframes fadeIn {
+                from { opacity: 0; transform: scale(0.8); }
+                to { opacity: 1; transform: scale(1); }
+            }
+            
             @keyframes pulse {
                 0% { opacity: 1; }
                 50% { opacity: 0.5; }
@@ -95,6 +127,12 @@
         
         <!-- 音乐控制按钮 -->
         <button id="musicControl" title="播放/暂停背景音乐"></button>
+        
+        <!-- 音乐提示气泡 -->
+        <div id="musicHintBubble" style="display: none;">
+            点击右下角按钮播放背景音乐
+            <button id="closeHint" style="background: none; border: none; color: #ccc; float: right; cursor: pointer;">×</button>
+        </div>
         
         <div id="box">
             <!-- 个人资料卡片 -->
@@ -204,9 +242,31 @@
             // 音乐控制功能
             const musicControl = document.getElementById('musicControl');
             const bgMusic = document.getElementById('bgMusic');
+            const musicHintBubble = document.getElementById('musicHintBubble');
+            const closeHint = document.getElementById('closeHint');
             
             // 设置音乐音量（0-1）
             bgMusic.volume = 0.3;
+            
+            // 显示音乐提示气泡
+            function showMusicHint() {
+                // 检查是否之前已经关闭过提示
+                if (!localStorage.getItem('musicHintClosed')) {
+                    musicHintBubble.style.display = 'block';
+                    
+                    // 5秒后自动隐藏
+                    setTimeout(() => {
+                        musicHintBubble.style.display = 'none';
+                    }, 8000);
+                }
+            }
+            
+            // 关闭提示气泡
+            closeHint.addEventListener('click', function() {
+                musicHintBubble.style.display = 'none';
+                // 记住用户已经关闭过提示
+                localStorage.setItem('musicHintClosed', 'true');
+            });
             
             // 尝试自动播放音乐
             function tryAutoPlay() {
@@ -224,6 +284,8 @@
                         // 自动播放失败
                         bgMusic.muted = false;
                         console.log("自动播放失败:", error);
+                        // 显示提示气泡
+                        showMusicHint();
                         // 等待用户交互
                         document.addEventListener('click', initAudioOnInteraction, { once: true });
                     });
@@ -236,12 +298,23 @@
                     .then(() => {
                         musicControl.classList.add('playing');
                         musicControl.title = "暂停背景音乐";
+                        // 隐藏提示气泡
+                        musicHintBubble.style.display = 'none';
                     })
                     .catch(e => console.log("交互后播放失败:", e));
             }
             
             // 页面加载后尝试自动播放
-            window.addEventListener('load', tryAutoPlay);
+            window.addEventListener('load', function() {
+                tryAutoPlay();
+                
+                // 如果自动播放失败，3秒后显示提示
+                setTimeout(() => {
+                    if (bgMusic.paused) {
+                        showMusicHint();
+                    }
+                }, 3000);
+            });
             
             // 音乐控制按钮点击事件
             musicControl.addEventListener('click', function() {
@@ -250,6 +323,8 @@
                         .then(() => {
                             musicControl.classList.add('playing');
                             musicControl.title = "暂停背景音乐";
+                            // 隐藏提示气泡
+                            musicHintBubble.style.display = 'none';
                         })
                         .catch(e => {
                             console.log("播放失败:", e);
