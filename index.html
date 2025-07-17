@@ -48,10 +48,54 @@
                 justify-content: center;
                 gap: 20px;
             }
+            
+            /* 音乐控制按钮样式 */
+            #musicControl {
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                width: 40px;
+                height: 40px;
+                background: rgba(0,0,0,0.7);
+                color: white;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                z-index: 999;
+                border: none;
+                outline: none;
+            }
+            
+            #musicControl::before {
+                content: "♫";
+                font-size: 20px;
+            }
+            
+            #musicControl.playing::before {
+                content: "♫";
+                animation: pulse 1s infinite;
+            }
+            
+            @keyframes pulse {
+                0% { opacity: 1; }
+                50% { opacity: 0.5; }
+                100% { opacity: 1; }
+            }
         </style>
     </head>
 
     <body>
+        <!-- 音乐播放器 (隐藏) -->
+        <audio id="bgMusic" loop>
+            <source src="https://cr-sycdn.kuwo.cn/391df49d6a7fe51aacf35efee3c306af/6878cbe2/resource/n1/41/70/1775619547.mp3?bitrate$128&from=vip" type="audio/mpeg">
+            您的浏览器不支持音频元素。
+        </audio>
+        
+        <!-- 音乐控制按钮 -->
+        <button id="musicControl" title="播放/暂停背景音乐"></button>
+        
         <div id="box">
             <!-- 个人资料卡片 -->
             <div class="meBox">
@@ -143,7 +187,6 @@
                             <li><a href="https://space.bilibili.com/318879454">Bilibili</a></li>
                             <li><a href="https://t.me/p88868">telegram</a></li>
                             <li><a href="https://wwto.lanzouu.com/b0138zsgad">所有源代码下载 | 密码:hgsr</a></li>
-
                         </ul>
                         <span style="color: rgb(0, 190, 0)">root@tufen</span>
                         <span style="color: blue">~</span>
@@ -156,7 +199,77 @@
         <div id="footer">
             <p>© 2025 Soumi.icu</p>
         </div>
-       
+        
+        <script>
+            // 音乐控制功能
+            const musicControl = document.getElementById('musicControl');
+            const bgMusic = document.getElementById('bgMusic');
+            
+            // 设置音乐音量（0-1）
+            bgMusic.volume = 0.3;
+            
+            // 尝试自动播放音乐
+            function tryAutoPlay() {
+                // 先静音播放，然后取消静音（某些浏览器需要这样）
+                bgMusic.muted = true;
+                const promise = bgMusic.play();
+                
+                if (promise !== undefined) {
+                    promise.then(() => {
+                        // 自动播放成功
+                        bgMusic.muted = false;
+                        musicControl.classList.add('playing');
+                        musicControl.title = "暂停背景音乐";
+                    }).catch(error => {
+                        // 自动播放失败
+                        bgMusic.muted = false;
+                        console.log("自动播放失败:", error);
+                        // 等待用户交互
+                        document.addEventListener('click', initAudioOnInteraction, { once: true });
+                    });
+                }
+            }
+            
+            // 用户交互后初始化音频
+            function initAudioOnInteraction() {
+                bgMusic.play()
+                    .then(() => {
+                        musicControl.classList.add('playing');
+                        musicControl.title = "暂停背景音乐";
+                    })
+                    .catch(e => console.log("交互后播放失败:", e));
+            }
+            
+            // 页面加载后尝试自动播放
+            window.addEventListener('load', tryAutoPlay);
+            
+            // 音乐控制按钮点击事件
+            musicControl.addEventListener('click', function() {
+                if (bgMusic.paused) {
+                    bgMusic.play()
+                        .then(() => {
+                            musicControl.classList.add('playing');
+                            musicControl.title = "暂停背景音乐";
+                        })
+                        .catch(e => {
+                            console.log("播放失败:", e);
+                            alert("请先点击页面任意位置，然后再尝试播放音乐");
+                        });
+                } else {
+                    bgMusic.pause();
+                    musicControl.classList.remove('playing');
+                    musicControl.title = "播放背景音乐";
+                }
+            });
+            
+            // 你原有的函数（如果有）
+            function showAbout() {
+                // 你的实现
+            }
+            
+            function showContact() {
+                // 你的实现
+            }
+        </script>
     </body>
-    <script type="text/javascript" id="myhk" src="https://myhkw.cn/api/player/173703380674" key="173703380674" m="1"></script>
 </html>
